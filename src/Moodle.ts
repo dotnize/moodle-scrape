@@ -51,14 +51,14 @@ export class Moodle {
 		});
 		this.cookies = res.headers.get('set-cookie')?.split('Secure, ').find((c: String) => c.startsWith("MoodleSession"));
 
-        if(this.cookies) {
+        if(this.cookies && refresh === true) {
             await this.refresh();
         }
 		return !!this.cookies;
     }
 
     /**
-     * Fetches the user data 
+     * Fetches the user data and stores them in the Moodle instance
      * @param cookies optional
      */
     async refresh(cookies = this.cookies) {
@@ -68,38 +68,44 @@ export class Moodle {
         const body = await res.text();
         const $ = load(body);
 
-        // parse courses
-        this.courses = $("#main-header .visible1 > a").map((_, el) => {
-            return {
-                id: parseInt(el.attribs.href.split("?id=")[1]),
-                name: el.attribs.title,
-                tasks: []
-            }
-        }).toArray();
+        try {
+            // parse courses
+            this.courses = $("#main-header .visible1 > a").map((_, el) => {
+                return {
+                    id: parseInt(el.attribs.href.split("?id=")[1]),
+                    name: el.attribs.title,
+                    tasks: []
+                }
+            }).toArray();
 
-        // parse tasks
-        this.tasks = $(".event").map((i, el) => {
-            return {
-                id: parseInt(el.attribs["data-event-id"]),
-                name: el.attribs["data-event-title"],
-                description: $($(".description-content").get(i)).text(),
-                deadline: $($(".description > .row:not(.mt-1) > .col-xs-11").get(i)).text(),
-                course: this.courses.find(e => e.id === parseInt(el.attribs["data-course-id"])) as Course
-            }
-        }).toArray();
+            // parse tasks
+            this.tasks = $(".event").map((i, el) => {
+                return {
+                    id: parseInt(el.attribs["data-event-id"]),
+                    name: el.attribs["data-event-title"],
+                    description: $($(".description-content").get(i)).text(),
+                    deadline: $($(".description > .row:not(.mt-1) > .col-xs-11").get(i)).text(),
+                    course: this.courses.find(e => e.id === parseInt(el.attribs["data-course-id"])) as Course
+                }
+            }).toArray();
 
-        // put the tasks in their corresponding courses
-        this.tasks.forEach(t => {
-            this.courses.find(c => c.id === t.course.id)?.tasks.push(t);
-        });
+            // put the tasks in their corresponding courses
+            this.tasks.forEach(t => {
+                this.courses.find(c => c.id === t.course.id)?.tasks.push(t);
+            });
 
-        // parse user
-        this.user = {
-            id: parseInt($(".theme-loginform-form > a").attr("href")?.split("?id=")[1] as string),
-            name: $(".usertext").text(),
-            picture: $(".welcome_userpicture").attr("src") as string
-        };
+            // parse user
+            this.user = {
+                id: parseInt($(".theme-loginform-form > a").attr("href")?.split("?id=")[1] as string),
+                name: $(".usertext").text(),
+                picture: $(".welcome_userpicture").attr("src") as string
+            };
 
-        return true;
+            return true;
+
+        } catch(err) {
+            console.log(err);
+            return false;
+        }
     }
 }
