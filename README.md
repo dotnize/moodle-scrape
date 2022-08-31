@@ -1,5 +1,6 @@
 # moodle-scrape
 [![NPM](https://nodei.co/npm/moodle-scrape.png)](https://www.npmjs.com/package/moodle-scrape)<br>
+[![Docs](https://img.shields.io/github/workflow/status/nizewn/moodle-scrape/Deploy%20TypeDoc%20docs%20to%20Pages?label=docs&logo=github)](https://nizewn.github.io/moodle-scrape)<br>
 Easily scrape data from Moodle sites. Tested on Moodle v3.8.
 
 ### Features:
