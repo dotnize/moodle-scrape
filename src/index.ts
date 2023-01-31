@@ -1,2 +1,2 @@
-export { Moodle } from './Moodle'
-export * from './types/types'
+export { Moodle } from "./Moodle";
+export * from "./types/types";
