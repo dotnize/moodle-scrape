@@ -1,10 +1,12 @@
-import { load } from "cheerio";
+import { Cheerio, CheerioAPI, Element, load } from "cheerio";
 
 import { Course, Task, User, Fetch, Options } from "./types/types";
 
 const defaultOptions: Options = {
   refresh: true,
 };
+
+const UnixTimestampRate = 1000;
 
 export class Moodle {
   url: string;
@@ -87,6 +89,33 @@ export class Moodle {
     return !!this.cookies;
   }
 
+  getCourseAndDate(anchors: Cheerio<Element>, $: CheerioAPI) {
+    const res: { date?: Date; course?: Course } = {};
+    anchors.map((_, el) => {
+      if (typeof el.attribs["href"] === "undefined") return;
+      const href = el.attribs["href"];
+      if (href?.includes("calendar")) {
+        const timeParams = href.match(/time=\d*/);
+        if (!timeParams || timeParams?.length === 0) return;
+        const timeString = timeParams[0].split("=").pop();
+        if (!timeString) return;
+        res.date = new Date(parseInt(timeString) * UnixTimestampRate);
+      }
+      if (href?.includes("course")) {
+        const courseParams = href.match(/id=\d*/);
+        if (!courseParams || courseParams?.length === 0) return;
+        const idString = courseParams[0].split("=").pop();
+        if (!idString) return;
+        res.course = {
+          id: parseInt(idString),
+          name: $(el).text() || "",
+          tasks: [],
+        };
+      }
+    });
+    return res;
+  }
+
   /**
    * Fetches the user data and stores them in the Moodle instance
    * @param cookies optional
@@ -100,40 +129,37 @@ export class Moodle {
     );
     const body = await res.text();
     const $ = load(body);
+    const courses = new Map<number, Course>();
 
     try {
       // parse courses
-      this.courses = $("#main-header .visible1 > a")
-        .map((_, el) => {
-          return {
-            id: parseInt(el.attribs.href.split("?id=")[1]),
-            name: el.attribs.title,
-            tasks: [],
-          };
-        })
-        .toArray();
-
-      // parse tasks
       this.tasks = $(".event")
-        .map((i, el) => {
-          return {
+        .map((_, el) => {
+          const description = $(".description-content", el).first().text();
+          const anchors = $("a", el);
+          const { date, course: retrievedCourse } = this.getCourseAndDate(
+            anchors,
+            $
+          );
+          if (!retrievedCourse) return;
+          if (!courses.has(retrievedCourse.id)) {
+            courses.set(retrievedCourse.id, retrievedCourse);
+          }
+          const course = courses.get(retrievedCourse.id);
+          const task = {
             id: parseInt(el.attribs["data-event-id"]),
             name: el.attribs["data-event-title"],
-            description: $($(".description-content").get(i)).text(),
-            deadline: $(
-              $(".description > .row:not(.mt-1) > .col-xs-11").get(i)
-            ).text(),
-            course: this.courses.find(
-              (e) => e.id === parseInt(el.attribs["data-course-id"])
-            ) as Course,
-          };
+            description,
+            deadline: date,
+            // Do we really need to crossreference like this?
+            course: course,
+          } as Task;
+          course?.tasks.push(task);
+          return task;
         })
         .toArray();
 
-      // put the tasks in their corresponding courses
-      this.tasks.forEach((t) => {
-        this.courses.find((c) => c.id === t.course.id)?.tasks.push(t);
-      });
+      this.courses = Array.from(courses.values());
 
       // parse user
       this.user = {

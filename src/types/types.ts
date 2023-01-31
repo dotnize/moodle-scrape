@@ -4,7 +4,7 @@ export interface Task {
     id: number;
     name: string;
     description: string;
-    deadline: string;
+    deadline: Date;
     course: Course;
 }
 export interface User {
