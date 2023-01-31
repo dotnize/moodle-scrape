@@ -109,7 +109,7 @@ export class Moodle {
         res.course = {
           id: parseInt(idString),
           name: $(el).text() || "",
-          tasks: [],
+          taskIds: [],
         };
       }
     });
@@ -152,9 +152,9 @@ export class Moodle {
             description,
             deadline: date,
             // Do we really need to crossreference like this?
-            course: course,
+            courseId: course?.id,
           } as Task;
-          course?.tasks.push(task);
+          course?.taskIds.push(task.id);
           return task;
         })
         .toArray();

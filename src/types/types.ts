@@ -8,7 +8,7 @@ export interface Task {
   name: string;
   description: string;
   deadline: Date;
-  course: Course;
+  courseId: number;
 }
 export interface User {
   id: number;
@@ -18,7 +18,7 @@ export interface User {
 export interface Course {
   id: number;
   name: string;
-  tasks: Array<Task>;
+  taskIds: Array<number>;
 }
 
 export interface Options {
