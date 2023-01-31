@@ -17,3 +17,8 @@ export interface Course {
     name: string;
     tasks: Array<Task>;
 }
+
+export interface Options{
+    refresh?: boolean;
+    loginFormPath?: string;
+}
