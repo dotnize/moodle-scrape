@@ -1,6 +1,6 @@
 {
   "name": "moodle-scrape",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Scrape data from Moodle sites",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
