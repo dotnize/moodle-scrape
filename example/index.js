@@ -20,7 +20,7 @@ async function init() {
   }
 
   console.time("-- getInfo() time");
-  await moodle.refresh();
+  await moodle.refresh(undefined, { navCourses: false });
   console.timeEnd("-- getInfo() time");
 
   console.log(moodle.user);
