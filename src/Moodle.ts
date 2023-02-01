@@ -119,8 +119,9 @@ export class Moodle {
   /**
    * Fetches the user data and stores them in the Moodle instance
    * @param cookies optional
+   * @param { boolean } options.navCourses  Gets all courses from the 'My Courses' dropdown menu in the navbar, optional
    */
-  async refresh(cookies = this.cookies) {
+  async refresh(cookies = this.cookies, options?: { navCourses?: boolean }) {
     const res = await this.fetch(
       `${this.url}/calendar/view.php?view=upcoming`,
       {
@@ -132,7 +133,18 @@ export class Moodle {
     const courses = new Map<number, Course>();
 
     try {
-      // parse courses
+      if (options?.navCourses) {
+        $(".mycourses:first li > a").map((_, el) => {
+          const id = parseInt(el.attribs.href.split("?id=")[1]);
+          if (courses.has(id)) return;
+          const course = {
+            id,
+            name: $(el).text() || "",
+            taskIds: [],
+          };
+          courses.set(id, course);
+        });
+      }
       this.tasks = $(".event")
         .map((_, el) => {
           const description = $(".description-content", el).first().text();
@@ -151,7 +163,6 @@ export class Moodle {
             name: el.attribs["data-event-title"],
             description,
             deadline: date,
-            // Do we really need to crossreference like this?
             courseId: course?.id,
           } as Task;
           course?.taskIds.push(task.id);
@@ -161,7 +172,6 @@ export class Moodle {
 
       this.courses = Array.from(courses.values());
 
-      // parse user
       this.user = {
         id: parseInt(
           $(".theme-loginform-form > a")
