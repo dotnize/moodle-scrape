@@ -22,14 +22,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nizewn/moodle-scrape.git"
+    "url": "git+https://github.com/nizefoo/moodle-scrape.git"
   },
-  "author": "nizewn",
+  "author": "nizefoo",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nizewn/moodle-scrape/issues"
+    "url": "https://github.com/nizefoo/moodle-scrape/issues"
   },
-  "homepage": "https://nizewn.github.io/moodle-scrape/",
+  "homepage": "https://moodle-scrape.nize.foo",
   "devDependencies": {
     "gen-esm-wrapper": "^1.1.3",
     "rimraf": "^4.1.2",
