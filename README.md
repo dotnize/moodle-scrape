@@ -1,7 +1,7 @@
 # moodle-scrape
 
 [![NPM](https://nodei.co/npm/moodle-scrape.png)](https://www.npmjs.com/package/moodle-scrape)<br>
-[![Docs](https://img.shields.io/github/actions/workflow/status/nizefoo/moodle-scrape/static.yml?branch=main&label=docs&logo=github)](https://moodle-scrape.nize.foo)<br>
+[![Docs](https://img.shields.io/github/actions/workflow/status/99nize/moodle-scrape/static.yml?branch=main&label=docs&logo=github)](https://moodle-scrape.nize.foo)<br>
 Easily scrape data from Moodle sites. Tested on Moodle v3.8.
 
 ### Features:
@@ -9,7 +9,7 @@ Easily scrape data from Moodle sites. Tested on Moodle v3.8.
 - [x] user info
 - [x] courses
 - [x] tasks/deadlines/events
-- [ ] course files/resources ([#1](https://github.com/nizefoo/moodle-scrape/issues/1))
+- [ ] course files/resources ([#1](https://github.com/99nize/moodle-scrape/issues/1))
 
 # Installation
 

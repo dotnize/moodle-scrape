@@ -1,6 +1,6 @@
 {
   "name": "moodle-scrape",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "description": "Scrape data from Moodle sites",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,12 +22,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nizefoo/moodle-scrape.git"
+    "url": "git+https://github.com/99nize/moodle-scrape.git"
   },
-  "author": "nizefoo",
+  "author": "Nathaniel Tampus",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nizefoo/moodle-scrape/issues"
+    "url": "https://github.com/99nize/moodle-scrape/issues"
   },
   "homepage": "https://moodle-scrape.nize.foo",
   "devDependencies": {
